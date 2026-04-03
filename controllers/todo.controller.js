@@ -122,3 +122,56 @@ export const getTodoById = async (req, res) => {
         })
     }
 };
+
+//Update TODO by ID - PUT API
+export const updateTodo = async (req, res) => {
+      try {
+        const { id } = req.params;
+        const { title, description } = req.body;
+
+         // Validate ID based on mongoose
+        if(!mongoose.Types.ObjectId.isValid(id)){
+            return res.status(400).json({
+                 success: false,
+                 message: "Invalid Todo ID",
+            })
+        }
+
+         // Valid Input
+         if (!title || title.trim() === "" ) {
+              return res.status(400).json({
+                  success:  false,
+                  message: "Tilte is required",
+              });
+         }
+
+         // Update Todo
+         const todo = await todoModel.findByIdAndUpdate(
+            id,
+            { title, description },
+            { new: true, runValidators: true } // to return the updated document
+         );
+
+         // If todo not found
+         if(!todo){
+             return res.status(404).json({
+                 success: false,
+                 message: "Todo not found",
+             });
+         }
+
+         //If todo found and updated
+         return res.status(200).json({
+             success: true,
+             message: "Todo updated successfully",
+             data: todo,
+         });
+        
+      } catch (error) {
+          return res.status(500).json({
+              success: false,
+              message: "Internal Server Error",
+              error: error.message
+          })
+      }
+}
