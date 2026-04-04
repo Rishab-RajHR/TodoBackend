@@ -174,4 +174,54 @@ export const updateTodo = async (req, res) => {
               error: error.message
           })
       }
+};
+
+
+//TOGGLE TODO by ID - PATCH API
+export const toggleTodo = async (req, res) => {
+     try {
+
+        const { id } = req.params;
+
+        // Validate ID based on mongoose
+        if(!mongoose.Types.ObjectId.isValid(id)){
+            return res.status(400).json({
+                 success: false,
+                 message: "Invalid Todo ID",
+            })
+        }
+
+        // GET current todo
+        const todo = await todoModel.findById(id);
+
+        // If todo not found
+        if(!todo) {
+             return res.status(404).json({
+                 success: false,
+                 message: "Todo not found",
+             });
+        }
+
+        // Flip the isCompleted field
+        todo.isCompleted = !todo.isCompleted;
+
+        await todo.save();
+
+        // If todo found and updated
+        return res.status(200).json({
+            success: true,
+            message: "Todo toggled successfully",
+            data: todo,
+        });
+
+
+        
+     } catch (error) {
+        return res.status(500).json({
+              success: false,
+              message: "Internal Server Error",
+              error: error.message
+        })
+     }
 }
+
