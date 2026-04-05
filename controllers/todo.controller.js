@@ -225,3 +225,43 @@ export const toggleTodo = async (req, res) => {
      }
 }
 
+// Delete TDOD by ID - DELETE API
+export const deleteTodo = async (req, res) => {
+     try {
+        const { id } = req.params;
+
+        // Validate ID based on mongoose
+        if(!mongoose.Types.ObjectId.isValid(id)){
+             return res.status(400).json({
+                 success: false,
+                 message: "Invalid Todo ID"
+             });
+        }
+
+        // Delete Todo
+        const todo = await todoModel.findByIdAndDelete(id);
+
+        // If todo not found
+        if(!todo){
+            return res.status(404).json({
+                success: false,
+                message: "Todo not found",
+            });
+        }
+
+        // If todo found and deleted
+        return res.status(200).json({
+             success: true,
+             message: "Todo deleted successfully",
+             data: todo,
+        });
+        
+     } catch (error) {
+         return res.status(500).json({
+             success: false,
+             message: "Internal Server Error",
+             error: error.message,
+         })
+     }
+}
+

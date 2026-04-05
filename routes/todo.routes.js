@@ -1,5 +1,5 @@
 import express from "express";
-import { createTodo , getTodos, getTodoById , updateTodo, toggleTodo } from "../controllers/todo.controller.js";
+import { createTodo , getTodos, getTodoById , updateTodo, toggleTodo, deleteTodo } from "../controllers/todo.controller.js";
 
 const route = express.Router();
 
@@ -17,7 +17,10 @@ route.get('/:id', getTodoById);
 route.put('/:id', updateTodo);
 
 // Toggle TODO completion status by ID
-route.patch('/:id/toggle', toggleTodo)
+route.patch('/:id/toggle', toggleTodo);
+
+// Delete TODO by ID
+route.delete('/:id', deleteTodo);
 
 
 export default route;
